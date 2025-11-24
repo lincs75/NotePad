@@ -38,7 +38,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-
+import android.widget.SearchView;
 
 /**
  * Displays a list of notes. Will display notes from the {@link Uri}
@@ -61,6 +61,7 @@ public class NotesList extends ListActivity {
     private static final String[] PROJECTION = new String[] {
             NotePad.Notes._ID, // 0
             NotePad.Notes.COLUMN_NAME_TITLE, // 1
+            NotePad.Notes.COLUMN_NAME_TIMESTAMP // 2
     };
 
     /** The index of the title column */
@@ -102,11 +103,11 @@ public class NotesList extends ListActivity {
          * Please see the introductory note about performing provider operations on the UI thread.
          */
         Cursor cursor = managedQuery(
-            getIntent().getData(),            // Use the default content URI for the provider.
-            PROJECTION,                       // Return the note ID and title for each note.
-            null,                             // No where clause, return all records.
-            null,                             // No where clause, therefore no where column values.
-            NotePad.Notes.DEFAULT_SORT_ORDER  // Use the default sort order.
+                getIntent().getData(),            // Use the default content URI for the provider.
+                PROJECTION,                       // Return the note ID and title for each note.
+                null,                             // No where clause, return all records.
+                null,                             // No where clause, therefore no where column values.
+                NotePad.Notes.DEFAULT_SORT_ORDER  // Use the default sort order.
         );
 
         /*
@@ -118,21 +119,21 @@ public class NotesList extends ListActivity {
          */
 
         // The names of the cursor columns to display in the view, initialized to the title column
-        String[] dataColumns = { NotePad.Notes.COLUMN_NAME_TITLE } ;
+        String[] dataColumns = { NotePad.Notes.COLUMN_NAME_TITLE, NotePad.Notes.COLUMN_NAME_TIMESTAMP } ;
 
         // The view IDs that will display the cursor columns, initialized to the TextView in
         // noteslist_item.xml
-        int[] viewIDs = { android.R.id.text1 };
+        int[] viewIDs = { android.R.id.text1, R.id.text2 }; // 假设 text2 是时间戳的 TextView ID
 
         // Creates the backing adapter for the ListView.
         SimpleCursorAdapter adapter
-            = new SimpleCursorAdapter(
-                      this,                             // The Context for the ListView
-                      R.layout.noteslist_item,          // Points to the XML for a list item
-                      cursor,                           // The cursor to get items from
-                      dataColumns,
-                      viewIDs
-              );
+                = new SimpleCursorAdapter(
+                this,                             // The Context for the ListView
+                R.layout.noteslist_item,          // Points to the XML for a list item
+                cursor,                           // The cursor to get items from
+                dataColumns,
+                viewIDs
+        );
 
         // Sets the ListView's adapter to be the cursor adapter that was just created.
         setListAdapter(adapter);
@@ -153,9 +154,28 @@ public class NotesList extends ListActivity {
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate menu from XML resource
+        super.onCreateOptionsMenu(menu);
+
+        // 添加搜索框
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.list_options_menu, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.menu_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                performSearch(query);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                performSearch(newText);
+                return true;
+            }
+        });
 
         // Generate any additional actions that can be performed on the
         // overall list.  In a normal install, there are no additional
@@ -166,7 +186,24 @@ public class NotesList extends ListActivity {
         menu.addIntentOptions(Menu.CATEGORY_ALTERNATIVE, 0, 0,
                 new ComponentName(this, NotesList.class), null, intent, 0, null);
 
-        return super.onCreateOptionsMenu(menu);
+        return true;
+    }
+
+    private void performSearch(String query) {
+        String selection = NotePad.Notes.COLUMN_NAME_TITLE + " LIKE ? OR " +
+                NotePad.Notes.COLUMN_NAME_NOTE + " LIKE ?";
+        String[] selectionArgs = new String[] { "%" + query + "%", "%" + query + "%" };
+
+        Cursor cursor = managedQuery(
+                getIntent().getData(),
+                PROJECTION,
+                selection,
+                selectionArgs,
+                NotePad.Notes.DEFAULT_SORT_ORDER
+        );
+
+        SimpleCursorAdapter adapter = (SimpleCursorAdapter) getListAdapter();
+        adapter.changeCursor(cursor);
     }
 
     @Override
@@ -224,26 +261,26 @@ public class NotesList extends ListActivity {
              * Add alternatives to the menu
              */
             menu.addIntentOptions(
-                Menu.CATEGORY_ALTERNATIVE,  // Add the Intents as options in the alternatives group.
-                Menu.NONE,                  // A unique item ID is not required.
-                Menu.NONE,                  // The alternatives don't need to be in order.
-                null,                       // The caller's name is not excluded from the group.
-                specifics,                  // These specific options must appear first.
-                intent,                     // These Intent objects map to the options in specifics.
-                Menu.NONE,                  // No flags are required.
-                items                       // The menu items generated from the specifics-to-
-                                            // Intents mapping
+                    Menu.CATEGORY_ALTERNATIVE,  // Add the Intents as options in the alternatives group.
+                    Menu.NONE,                  // A unique item ID is not required.
+                    Menu.NONE,                  // The alternatives don't need to be in order.
+                    null,                       // The caller's name is not excluded from the group.
+                    specifics,                  // These specific options must appear first.
+                    intent,                     // These Intent objects map to the options in specifics.
+                    Menu.NONE,                  // No flags are required.
+                    items                       // The menu items generated from the specifics-to-
+                    // Intents mapping
             );
-                // If the Edit menu item exists, adds shortcuts for it.
-                if (items[0] != null) {
+            // If the Edit menu item exists, adds shortcuts for it.
+            if (items[0] != null) {
 
-                    // Sets the Edit menu item shortcut to numeric "1", letter "e"
-                    items[0].setShortcut('1', 'e');
-                }
-            } else {
-                // If the list is empty, removes any existing alternative actions from the menu
-                menu.removeGroup(Menu.CATEGORY_ALTERNATIVE);
+                // Sets the Edit menu item shortcut to numeric "1", letter "e"
+                items[0].setShortcut('1', 'e');
             }
+        } else {
+            // If the list is empty, removes any existing alternative actions from the menu
+            menu.removeGroup(Menu.CATEGORY_ALTERNATIVE);
+        }
 
         // Displays the menu
         return true;
@@ -263,7 +300,8 @@ public class NotesList extends ListActivity {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.menu_add) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.menu_add) {
             /*
              * Launches a new Activity using an Intent. The intent filter for the Activity
              * has to have action ACTION_INSERT. No category is set, so DEFAULT is assumed.
@@ -271,7 +309,7 @@ public class NotesList extends ListActivity {
              */
             startActivity(new Intent(Intent.ACTION_INSERT, getIntent().getData()));
             return true;
-        } else if (item.getItemId() == R.id.menu_paste) {
+        } else if (itemId == R.id.menu_paste) {
             /*
              * Launches a new Activity using an Intent. The intent filter for the Activity
              * has to have action ACTION_PASTE. No category is set, so DEFAULT is assumed.
@@ -279,8 +317,9 @@ public class NotesList extends ListActivity {
              */
             startActivity(new Intent(Intent.ACTION_PASTE, getIntent().getData()));
             return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -339,8 +378,8 @@ public class NotesList extends ListActivity {
         // as well.  This does a query on the system for any activities that
         // implement the ALTERNATIVE_ACTION for our data, adding a menu item
         // for each one that is found.
-        Intent intent = new Intent(null, Uri.withAppendedPath(getIntent().getData(), 
-                                        Integer.toString((int) info.id) ));
+        Intent intent = new Intent(null, Uri.withAppendedPath(getIntent().getData(),
+                Integer.toString((int) info.id) ));
         intent.addCategory(Intent.CATEGORY_ALTERNATIVE);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         menu.addIntentOptions(Menu.CATEGORY_ALTERNATIVE, 0, 0,
@@ -391,12 +430,12 @@ public class NotesList extends ListActivity {
         /*
          * Gets the menu item's ID and compares it to known actions.
          */
-        int id = item.getItemId();
-        if (id == R.id.context_open) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.context_open) {
             // Launch activity to view/edit the currently selected item
             startActivity(new Intent(Intent.ACTION_EDIT, noteUri));
             return true;
-        } else if (id == R.id.context_copy) { //BEGIN_INCLUDE(copy)
+        } else if (itemId == R.id.context_copy) {
             // Gets a handle to the clipboard service.
             ClipboardManager clipboard = (ClipboardManager)
                     getSystemService(Context.CLIPBOARD_SERVICE);
@@ -405,12 +444,13 @@ public class NotesList extends ListActivity {
             clipboard.setPrimaryClip(ClipData.newUri(   // new clipboard item holding a URI
                     getContentResolver(),               // resolver to retrieve URI info
                     "Note",                             // label for the clip
-                    noteUri));                          // the URI
+                    noteUri)                            // the URI
+            );
 
             // Returns to the caller and skips further processing.
             return true;
-            //END_INCLUDE(copy)
-        } else if (id == R.id.context_delete) {
+        } else if (itemId == R.id.context_delete) {
+
             // Deletes the note from the provider by passing in a URI in note ID format.
             // Please see the introductory note about performing provider operations on the
             // UI thread.
@@ -423,8 +463,9 @@ public class NotesList extends ListActivity {
 
             // Returns to the caller and skips further processing.
             return true;
+        } else {
+            return super.onContextItemSelected(item);
         }
-        return super.onContextItemSelected(item);
     }
 
     /**

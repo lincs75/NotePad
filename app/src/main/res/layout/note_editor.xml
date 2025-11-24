@@ -18,11 +18,12 @@
     android:id="@+id/note"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/transparent"
-    android:padding="5dp"
+    android:background="@android:color/background_light"
+    android:padding="16dp"
     android:scrollbars="vertical"
     android:fadingEdge="vertical"
     android:gravity="top"
-    android:textSize="22sp"
+    android:textSize="18sp"
+    android:textColor="@android:color/black"
     android:capitalize="sentences"
-/>
+    />

@@ -31,6 +31,9 @@
     <string name="menu_copy">Copy</string>
     <string name="menu_paste">Paste</string>
 
+    <!-- Search menu -->
+    <string name="menu_search">Search</string>
+
     <string name="button_ok">OK</string>
     <string name="text_title">Title:</string>
 

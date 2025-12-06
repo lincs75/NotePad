@@ -20,7 +20,7 @@
 2. 搜索功能
 支持通过标题或内容关键字实时搜索笔记，提升查找效率。
 
-<img width="352" height="614" alt="image" src="https://github.com/user-attachments/assets/24df0509-b8ca-47d3-80fc-c03f1bd611eb" />
+<img width="339" height="129" alt="image" src="https://github.com/user-attachments/assets/d4cd39dd-8e64-455f-8b50-bace80e8fc54" />
 
 
 3. UI美化

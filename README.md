@@ -13,7 +13,8 @@
 1. 笔记时间戳显示
 每条笔记都自动记录并显示创建/修改时间，方便用户追溯历史。
 
-<img width="341" height="178" alt="image" src="https://github.com/user-attachments/assets/cdcfa14c-7cca-46ae-aff0-0146e806cf19" />
+<img width="345" height="226" alt="image" src="https://github.com/user-attachments/assets/5eb4f860-2598-494d-b435-b6d92844d767" />
+
 
 
 2. 搜索功能

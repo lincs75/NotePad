@@ -26,9 +26,15 @@
 3. UI美化
 自定义主题与布局，整体风格简洁现代，提升用户体验。
 
-<img width="347" height="610" alt="image" src="https://github.com/user-attachments/assets/748bc312-6119-4fe9-8aa3-fc4c2569745f" />
-<img width="344" height="586" alt="image" src="https://github.com/user-attachments/assets/87488e08-f071-4a1a-966a-11e5969b4bdc" />
+<img width="478" height="847" alt="image" src="https://github.com/user-attachments/assets/5b7c1f27-7be3-4e11-a78a-57343d14c3b1" />
+<img width="477" height="784" alt="image" src="https://github.com/user-attachments/assets/15c20ce8-fa82-4c6e-98ae-32619f6fe3b4" />
+
+
+4.代办事项
+<img width="473" height="633" alt="image" src="https://github.com/user-attachments/assets/ae3ce326-f0ef-4809-9324-6ae1d4a0be00" />
+<img width="477" height="781" alt="image" src="https://github.com/user-attachments/assets/9a360d13-d071-4965-ac98-db37def0bfaa" />
+<img width="479" height="786" alt="image" src="https://github.com/user-attachments/assets/630458c5-2ba5-4e50-bd2b-e827dc63e6f7" />
 
 
 四、总结
-本项目不仅实现了记事本的全部基础功能，还在界面美化、搜索、时间戳等方面做了扩展，极大提升了实用性和用户体验。代码结构清晰，易于维护和扩展。
+本项目不仅实现了记事本的全部基础功能，还在界面美化、搜索、时间戳、待办事项等方面做了扩展，极大提升了实用性和用户体验。代码结构清晰，易于维护和扩展。

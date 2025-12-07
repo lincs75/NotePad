@@ -290,6 +290,9 @@ public class NotesList extends ListActivity {
              */
             startActivity(new Intent(Intent.ACTION_INSERT, getIntent().getData()));
             return true;
+        } else if (itemId == R.id.menu_todo) {
+            startActivity(new Intent(this, ToDoActivity.class));
+            return true;
         } else if (itemId == R.id.menu_paste) {
             /*
              * Launches a new Activity using an Intent. The intent filter for the Activity
